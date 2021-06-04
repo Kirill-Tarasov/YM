@@ -46,15 +46,16 @@ class YooMoney:
 			return {'error': 1, 'error_message': f'Status code: {acc.status_code}'}
 		return {'error': 0, 'data': acc.json()}
 
-	def getHistory(self, type=1, records=10):	# Get full details about specified amount of records (amount, comment, in/out...)
+	def getHistory(self, operation_type=1, records=10):	# Get full details about specified amount of records (amount, comment, in/out...)
 		if not 'Authorization' in self.headers.keys():
 			return {'error': 1, 'error_message': 'Token not set'}
 		oper_type = ''	# Fetch specified operations (empty for all; type = 1 - deposit; type = 2 - payment)
-		if type == 1:
+		if operation_type == 1:
 			oper_type = 'deposition'
-		elif type == 2:
+		elif operation_type == 2:
 			oper_type = 'payment'
-		payments = r.post(f'{self.api_url}/api/operation-history', data=f'type={oper_type}&records={records}&details=true', headers=self.headers, proxies=self.proxy)
+		data = f'type={oper_type}&records={int(records)}&details=true'
+		payments = r.post(f'{self.api_url}/api/operation-history', data=data, headers=self.headers, proxies=self.proxy)
 		if payments.status_code != 200:
 			return {'error': 1, 'error_message': f'Status code: {payments.status_code}'}
 		return {'error': 0, 'data': payments.json()}
